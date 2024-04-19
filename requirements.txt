@@ -7,3 +7,4 @@ oracledb
 openai
 pandas
 sqlalchemy
+tabulate
