@@ -42,6 +42,15 @@ def upload_file():
     if 'query' not in request.json:
         return jsonify({'error': 'No query part in JSON payload'})
     
+    table = ""
+    try:
+        with db.connect() as conn:
+            table = conn.execute(text("SELECT * FROM TEST_SCHEMA.RESOURCES"))
+    except Exception as e:
+        print(f"Error: {e}")
+    
+    table_mark = pd.DataFrame(table.fetchall(), columns=tuple(table.keys())).to_markdown()
+    
     template = """
     You are a Database Expert at a company. Your work is to provide only SQL Query about the company's database, to the user's Questions who is interacting with you.
     
@@ -54,14 +63,27 @@ def upload_file():
 
     <SCHEMA>{schema}</SCHEMA>
     
+    <TABLE>{table}</TABLE>
+    
+    FEW EXAMPLES HAVE BEEN GIVEN TO YOU:
+    
+    USER_QUESTION: selects resource name who has has apex skill
+    SQL_QUERY: SELECT resource_name FROM resources WHERE (DBMS_LOB.INSTR(Skills, 'APEX') > 0 AND DBMS_LOB.INSTR(Skills, 'APEX,AI') = 0) OR (DBMS_LOB.INSTR(Skills, ',APEX') > 0 AND DBMS_LOB.INSTR(Skills, ',APEX,AI') = 0) OR (DBMS_LOB.INSTR(Skills, 'APEX,') > 0 AND DBMS_LOB.INSTR(Skills, 'APEX,AI') = 0) OR (DBMS_LOB.INSTR(Skills, ',APEX,') > 0 AND DBMS_LOB.INSTR(Skills, ',APEX,AI') = 0);
+
+    USER_QUESTION: selects resource name who has has AI skill
+    SQL_QUERY: SELECT resource_name FROM resources WHERE DBMS_LOB.INSTR(Skills, 'AI') > 0 AND (DBMS_LOB.INSTR(Skills, 'APEX,AI') = 0 OR DBMS_LOB.INSTR(Skills, 'APEX,AI') > DBMS_LOB.INSTR(Skills, 'AI'));
+
+    USER_QUESTION: selects resource name who has has both APEX and AI skill
+    SQL_QUERY: SELECT resource_name FROM resources WHERE DBMS_LOB.INSTR(Skills, 'APEX') > 0 AND DBMS_LOB.INSTR(Skills, 'AI') > 0 AND (DBMS_LOB.INSTR(Skills, 'APEX,AI') > 0 OR DBMS_LOB.INSTR(Skills, 'AI,APEX') > 0);
+    
     Your turn:
-    Question: {question}
-    SQL Query:
+    USER_QUESTION: {question}
+    SQL_QUERY:
     """
     prompt = ChatPromptTemplate.from_template(template)
     sqlchain = prompt | llm | StrOutputParser()
     
-    query = sqlchain.invoke({"schema":schema,"question":request.json["query"]})
+    query = sqlchain.invoke({"schema":schema,"question":request.json["query"],"table":table_mark})
     query = query.replace("\\", "").replace(";", "")
     query = remove_after_conf(remove_after_note(query))
     
