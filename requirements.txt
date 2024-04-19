@@ -1,0 +1,9 @@
+flask
+gunicorn
+langchain
+langchain-openai
+python-dotenv
+oracledb
+openai
+pandas
+sqlalchemy
