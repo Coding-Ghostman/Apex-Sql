@@ -59,7 +59,7 @@ def upload_file():
     
     Write only the SQL query and nothing else. Do not wrap the SQL query in any other text, not even backticks. No other addition to the query like notes and stuff. JUST PROVIDE THE SQL QUERY.
     
-    If the User asks for COUNT Queries then use only COUNT as the column
+    Always try to provide all the columns as possible in the sql query.
     Use the Table Schema below for answering the SQL Query. 
     
     Don't Give Escape characters in the query
@@ -71,13 +71,13 @@ def upload_file():
     FEW EXAMPLES HAVE BEEN GIVEN TO YOU:
     
     USER_QUESTION: selects resource name who has has apex skill
-    SQL_QUERY: SELECT resource_name FROM resources WHERE (DBMS_LOB.INSTR(Skills, 'APEX') > 0 AND DBMS_LOB.INSTR(Skills, 'APEX,AI') = 0) OR (DBMS_LOB.INSTR(Skills, ',APEX') > 0 AND DBMS_LOB.INSTR(Skills, ',APEX,AI') = 0) OR (DBMS_LOB.INSTR(Skills, 'APEX,') > 0 AND DBMS_LOB.INSTR(Skills, 'APEX,AI') = 0) OR (DBMS_LOB.INSTR(Skills, ',APEX,') > 0 AND DBMS_LOB.INSTR(Skills, ',APEX,AI') = 0);
+    SQL_QUERY: SELECT * FROM resources WHERE (DBMS_LOB.INSTR(Skills, 'APEX') > 0 AND DBMS_LOB.INSTR(Skills, 'APEX,AI') = 0) OR (DBMS_LOB.INSTR(Skills, ',APEX') > 0 AND DBMS_LOB.INSTR(Skills, ',APEX,AI') = 0) OR (DBMS_LOB.INSTR(Skills, 'APEX,') > 0 AND DBMS_LOB.INSTR(Skills, 'APEX,AI') = 0) OR (DBMS_LOB.INSTR(Skills, ',APEX,') > 0 AND DBMS_LOB.INSTR(Skills, ',APEX,AI') = 0);
 
     USER_QUESTION: selects resource name who has has AI skill
-    SQL_QUERY: SELECT resource_name FROM resources WHERE DBMS_LOB.INSTR(Skills, 'AI') > 0 AND (DBMS_LOB.INSTR(Skills, 'APEX,AI') = 0 OR DBMS_LOB.INSTR(Skills, 'APEX,AI') > DBMS_LOB.INSTR(Skills, 'AI'));
+    SQL_QUERY: SELECT * FROM resources WHERE DBMS_LOB.INSTR(Skills, 'AI') > 0 AND (DBMS_LOB.INSTR(Skills, 'APEX,AI') = 0 OR DBMS_LOB.INSTR(Skills, 'APEX,AI') > DBMS_LOB.INSTR(Skills, 'AI'));
 
     USER_QUESTION: selects resource name who has has both APEX and AI skill
-    SQL_QUERY: SELECT resource_name FROM resources WHERE DBMS_LOB.INSTR(Skills, 'APEX') > 0 AND DBMS_LOB.INSTR(Skills, 'AI') > 0 AND (DBMS_LOB.INSTR(Skills, 'APEX,AI') > 0 OR DBMS_LOB.INSTR(Skills, 'AI,APEX') > 0);
+    SQL_QUERY: SELECT * FROM resources WHERE DBMS_LOB.INSTR(Skills, 'APEX') > 0 AND DBMS_LOB.INSTR(Skills, 'AI') > 0 AND (DBMS_LOB.INSTR(Skills, 'APEX,AI') > 0 OR DBMS_LOB.INSTR(Skills, 'AI,APEX') > 0);
     
     Your turn:
     USER_QUESTION: {question}
