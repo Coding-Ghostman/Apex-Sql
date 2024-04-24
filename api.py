@@ -70,7 +70,7 @@ def upload_file():
     # check if the post request has the file part
     if 'query' not in request.json:
         return jsonify({'error': 'No query part in JSON payload'})
-
+    print(request.json)
     table = ""
     try:
         with db.connect() as conn:
