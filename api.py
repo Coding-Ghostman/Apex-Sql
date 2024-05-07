@@ -96,7 +96,7 @@ def upload_file():
     IF THE USER_ASKS SOMETHING THAT IS NOT THERE IN SCHEMA THEN DO NOT INCLUDE THAT IN THE SQL QUERY. DO NOT COME UP WITH YOUR OWN SCHEMA. USE THE SCHEMA PROVIDED BELOW.
     
     If the user asks to show all the columns then, WHATEVER HAPPENS DON'T INCLUDE THE THE FILE_BLOB, AI_OUTPUT and AI_JSON_RESPONSE COLUMN OF TYPE BLOB in the sql query
-    IF AMERICA IS ASKED USE USA IN THE SQL QUERY. IF WOMAN IS ASKED THEN USE FEMALE IN THE SQL QUERY.
+    IF AMERICA IS ASKED USE USA IN THE SQL QUERY. IF WOMAN IS ASKED THEN USE 'Female' IN THE SQL QUERY. IF MAN IS MENTIONED THEN USE 'Male'
     Don't Use * in the select statements, Always try to include all the columns names.
     
     Always try to provide all the columns as possible in the sql query.
