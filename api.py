@@ -89,18 +89,29 @@ def upload_file():
     template = """
     You are a Database Expert at a company. Your work is to provide only SQL Query about the company's database, to the user's Questions who is interacting with you.
     
+    Don't Use * in the select statements, Always try to include all the columns names.
+    
     Write only the SQL query and nothing else. Do not wrap the SQL query in any other text, not even backticks. No other addition to the query like notes and stuff. JUST PROVIDE THE SQL QUERY.
+    
+    IF THE USER_ASKS SOMETHING THAT IS NOT THERE IN SCHEMA THEN DO NOT INCLUDE THAT IN THE SQL QUERY. DO NOT COME UP WITH YOUR OWN SCHEMA. USE THE SCHEMA PROVIDED BELOW.
+    
+    If the user asks to show all the columns then, WHATEVER HAPPENS DON'T INCLUDE THE THE FILE_BLOB, AI_OUTPUT and AI_JSON_RESPONSE COLUMN OF TYPE BLOB in the sql query
+    IF AMERICA IS ASKED USE USA IN THE SQL QUERY. IF WOMAN IS ASKED THEN USE FEMALE IN THE SQL QUERY.
+    Don't Use * in the select statements, Always try to include all the columns names.
     
     Always try to provide all the columns as possible in the sql query.
     Use the Table Schema below for answering the SQL Query. 
     
+    WHATEVER HAPPENS DON'T INCLUDE THE THE FILE_BLOB, AI_OUTPUT and AI_JSON_RESPONSE COLUMN OF TYPE BLOB in the sql query
+    
     Don't Give Escape characters in the query
-
+    IF AMERICA IS ASKED USE USA IN THE SQL QUERY. IF WOMAN IS ASKED THEN USE FEMALE IN THE SQL QUERY.
     <SCHEMA>{schema}</SCHEMA>
     
-    <TABLE>{table}</TABLE>
-    
+    WHATEVER HAPPENS DON'T INCLUDE THE THE FILE_BLOB, AI_OUTPUT and AI_JSON_RESPONSE COLUMN OF TYPE BLOB in the sql query
     FEW EXAMPLES HAVE BEEN GIVEN TO YOU:
+    
+    IF AMERICA IS ASKED USE USA IN THE SQL QUERY. IF WOMAN IS ASKED THEN USE FEMALE IN THE SQL QUERY.
     
     USER_QUESTION: selects resource name who has has apex skill
     SQL_QUERY: SELECT * FROM resources WHERE (DBMS_LOB.INSTR(Skills, 'APEX') > 0 AND DBMS_LOB.INSTR(Skills, 'APEX,AI') = 0) OR (DBMS_LOB.INSTR(Skills, ',APEX') > 0 AND DBMS_LOB.INSTR(Skills, ',APEX,AI') = 0) OR (DBMS_LOB.INSTR(Skills, 'APEX,') > 0 AND DBMS_LOB.INSTR(Skills, 'APEX,AI') = 0) OR (DBMS_LOB.INSTR(Skills, ',APEX,') > 0 AND DBMS_LOB.INSTR(Skills, ',APEX,AI') = 0);
@@ -111,6 +122,9 @@ def upload_file():
     USER_QUESTION: selects resource name who has has both APEX and AI skill
     SQL_QUERY: SELECT * FROM resources WHERE DBMS_LOB.INSTR(Skills, 'APEX') > 0 AND DBMS_LOB.INSTR(Skills, 'AI') > 0 AND (DBMS_LOB.INSTR(Skills, 'APEX,AI') > 0 OR DBMS_LOB.INSTR(Skills, 'AI,APEX') > 0);
     
+    USER_QUESTION: Applicants who are more than 45 years of age ?
+    SQL_QUERY:SELECT ID, NAME, SURNAME, PLACE_OF_BIRTH, NATIONALITY, PASSPORT_NUMBER, DATE_OF_ISSUE, DATE_OF_EXPIRY, DATE_OF_BIRTH, SEX FROM AI_PASSPORT WHERE DATE_OF_BIRTH < SYSDATE - INTERVAL '45' YEAR
+    
     Your turn:
     USER_QUESTION: {question}
     SQL_QUERY:
@@ -119,23 +133,24 @@ def upload_file():
     sqlchain = prompt | llm | StrOutputParser()
 
     query = sqlchain.invoke(
-        {"schema": schema, "question": request.json["query"], "table": table_mark})
+        {"schema": schema, "question": request.json["query"]})
     query = query.replace("\\", "").replace(";", "")
     query = remove_after_conf(remove_after_note(query))
-
+    print(query)
     result = ""
     try:
         with db.connect() as conn:
             result = conn.execute(text(query))
+        if result:
+            table_data = result.fetchall()
+            table_data = table_data[:5]
+            print(table_data)
+            table_data_markdown = pd.DataFrame(
+                table_data, columns=tuple(result.keys()))
+            data = pd.DataFrame(table_data, columns=tuple(
+                result.keys())).to_dict("records")
     except Exception as e:
-        print(f"Error: {e}")
-    if result:
-        table_data = result.fetchall()
-        table_data_markdown = pd.DataFrame(
-            table_data, columns=tuple(result.keys())).to_markdown()
-        data = pd.DataFrame(table_data, columns=tuple(
-            result.keys())).to_dict("records")
-
+        return {"error": "Database Error. Please Ask a Valid query related to table" }
     llm = ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0,
                      api_key=os.getenv("OPENAI_API_KEY"), model_kwargs={"response_format": {"type": "json_object"}})
     template = """
@@ -161,7 +176,7 @@ def upload_file():
     """
 
     prompt = ChatPromptTemplate.from_template(template)
-
+    print(prompt)
     summary_chain = prompt | llm | StrOutputParser()
     summary = summary_chain.invoke(
         {"schema": schema, "question": request.json["query"], "query": query, "response": table_data_markdown})
