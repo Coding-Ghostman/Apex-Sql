@@ -136,7 +136,6 @@ def upload_file():
         {"schema": schema, "question": request.json["query"]})
     query = query.replace("\\", "").replace(";", "")
     query = remove_after_conf(remove_after_note(query))
-    print(query)
     result = ""
     try:
         with db.connect() as conn:
@@ -144,7 +143,6 @@ def upload_file():
         if result:
             table_data = result.fetchall()
             table_data = table_data[:5]
-            print(table_data)
             table_data_markdown = pd.DataFrame(
                 table_data, columns=tuple(result.keys()))
             data = pd.DataFrame(table_data, columns=tuple(
@@ -176,7 +174,6 @@ def upload_file():
     """
 
     prompt = ChatPromptTemplate.from_template(template)
-    print(prompt)
     summary_chain = prompt | llm | StrOutputParser()
     summary = summary_chain.invoke(
         {"schema": schema, "question": request.json["query"], "query": query, "response": table_data_markdown})
