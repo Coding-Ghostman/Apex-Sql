@@ -9,3 +9,4 @@ pandas
 sqlalchemy
 uvicorn
 tabulate
+gevent 
