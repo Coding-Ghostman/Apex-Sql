@@ -7,4 +7,5 @@ oracledb
 openai
 pandas
 sqlalchemy
+uvicorn
 tabulate
