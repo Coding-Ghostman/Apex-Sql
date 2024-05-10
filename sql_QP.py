@@ -119,7 +119,7 @@ def get_QP():
     return qp, oracle_table
 
 
-INCLUDE_TABLES = ["visa_requests"]
+INCLUDE_TABLES = ["visa_requests2"]
 llm = OpenAI(model="gpt-3.5-turbo", response_format={"type": "json_object"})
 config = read_config()
 oracle_table = db_Connect_thinModePool(config)
