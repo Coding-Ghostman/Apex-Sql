@@ -1,24 +1,29 @@
 import oracledb
-from sqlalchemy import create_engine
+from sqlalchemy import (
+    create_engine,
+    inspect,
+)
 
-def remove_after_note(text):
-    index = text.find("Note")
-    if index != -1:
-        return text[:index]
-    return text
-def remove_after_conf(text):
-    index = text.find("Confidence")
-    if index != -1:
-        return text[:index]
-    return text
 
-def db_Connect_thinModePool(user, password, dsn, min=1, max=5, increment=1):
+def db_Connect_thinModePool(config) -> dict:
+    """Connect to Oracle Database using the thin mode pool"""
+    table_names = set()
     try:
-        ConnectionPool = oracledb.create_pool(
-            user=user, password=password, dsn=dsn, min=min, max=max, increment=increment)
-        engine = create_engine('oracle+oracledb://',
-                               creator=ConnectionPool.acquire)
-        return engine
+        connectionPool = oracledb.create_pool(
+            user=config["user"],
+            password=config["password"],
+            dsn=config["dsn"],
+            min=config["min"],
+            max=config["max"],
+            increment=config["inc"],
+        )
+        engine = create_engine("oracle+oracledb://", creator=connectionPool.acquire)
+        connection = engine.connect()
+
+        inspector = inspect(engine)
+        for table_name in inspector.get_table_names(schema="TEST_SCHEMA"):
+            table_names.add(table_name)
+        return {"connection": connection, "engine": engine, "table_names": table_names}
     except Exception as e:
         print(f"DB Error:  {e}")
         return None
