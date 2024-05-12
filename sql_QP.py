@@ -143,6 +143,7 @@ vector_index_dict = index_all_tables(sql_database)
 
 response_synthesis_prompt_str = (
     "Given an input question, synthesize a response from the query results.\n"
+    "\nExtra Notes: If You are engaging with table related to visas, if possible, do not add these columns with the name 'degree', 'passport', 'photo_image\n"
     "Query: {query_str}\n"
     "SQL: {sql_query}\n"
     "SQL Response: {context_str}\n"

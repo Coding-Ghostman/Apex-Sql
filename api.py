@@ -14,17 +14,15 @@ def add_underscore_if_inprogress(text):
         text = text.replace("inprogress", "in_progress")
     if "in progress" in text:
         text = text.replace("in progress", "in_progress")
-    text += ".If possible,Do not add these columns with the name 'degree', 'passport', 'photo_image'"
     return text
 
 
 @app.route("/api/apex/query", methods=["POST"])
 def text_to_sql_query():
-    if "query" not in request.json:
+    if "query" not in request.json: # type: ignore
         return jsonify({"error": "No query part in JSON payload"})
-
     try:
-        query = add_underscore_if_inprogress(request.json["query"])
+        query = add_underscore_if_inprogress(request.json["query"]) # type: ignore
 
         response, intermediats = QP.run_with_intermediates(query=query)
         sql_query = (

@@ -16,6 +16,7 @@ def db_Connect_thinModePool(config) -> dict:
             min=config["min"],
             max=config["max"],
             increment=config["inc"],
+            homogeneous=False
         )
         engine = create_engine("oracle+oracledb://", creator=connectionPool.acquire)
         connection = engine.connect()
@@ -26,4 +27,4 @@ def db_Connect_thinModePool(config) -> dict:
         return {"connection": connection, "engine": engine, "table_names": table_names}
     except Exception as e:
         print(f"DB Error:  {e}")
-        return None
+        return {}
