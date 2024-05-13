@@ -12,9 +12,7 @@ from dotenv import load_dotenv
 from llama_index.core import (
     PromptTemplate,
     SQLDatabase,
-    set_global_handler
 )
-import phoenix as px
 from llama_index.core.llms import ChatResponse
 from llama_index.core.objects import (
     SQLTableSchema,
@@ -32,8 +30,6 @@ from llama_index.core.query_pipeline import (
 
 load_dotenv()
 openai.api_key = os.environ.get("OPENAI_API_KEY")
-px.launch_app()
-set_global_handler("arize_phoenix")
 config = read_config()
 oracle_table = db_Connect_thinModePool(config)
 
@@ -177,5 +173,3 @@ QP_components = {
     "response_synthesis_prompt": response_synthesis_prompt,
     "response_synthesis_llm": llm,
 }
-
-print(px.active_session().url)
