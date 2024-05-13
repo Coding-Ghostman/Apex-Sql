@@ -33,8 +33,10 @@ openai.api_key = os.environ.get("OPENAI_API_KEY")
 config = read_config()
 oracle_table = db_Connect_thinModePool(config)
 
+
 def get_table_context_str():
     """Get table context string."""
+    global oracle_table
     context_strs = []
     if not oracle_table["connection"].is_healthy():
         config = read_config()
@@ -52,6 +54,7 @@ def get_table_context_str():
 
 def parse_response_to_sql(response: ChatResponse) -> str:
     """Parse response to SQL."""
+    global oracle_table
     if not oracle_table["connection"].is_healthy():
         config = read_config()
         oracle_table = db_Connect_thinModePool(config)
@@ -75,7 +78,7 @@ def get_table_context_and_rows_str(
     if not oracle_table["connection"].is_healthy():
         config = read_config()
         oracle_table = db_Connect_thinModePool(config)
-        
+
     context_strs = []
     for table_schema_obj in table_schema_objs:
         # first append table info + additional context
