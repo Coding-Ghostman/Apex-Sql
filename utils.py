@@ -9,7 +9,6 @@ def db_Connect_thinModePool(config) -> dict:
     """Connect to Oracle Database using the thin mode pool"""
     table_names = set()
     try:
-        oracledb.init_oracle_client()
         oracledb.defaults.stmtcachesize = 40
         connectionPool = oracledb.create_pool(
             user=config["user"],
@@ -19,7 +18,7 @@ def db_Connect_thinModePool(config) -> dict:
             max=config["max"],
             increment=config["inc"],
             homogeneous=False,
-            stmtcachesize=50
+            stmtcachesize=50,
         )
         engine = create_engine("oracle+oracledb://", creator=connectionPool.acquire)
         connection = engine.connect()

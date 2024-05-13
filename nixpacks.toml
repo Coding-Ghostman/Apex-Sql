@@ -4,8 +4,8 @@ aptPkgs = ['...','libsm6','libxext6','libc6','alien','libaio1']
 
 cmds = [
   'sudo apt-get -y update',
-  'sudo alien -i oracle-instantclient-basic-23.4.0.24.05-1.el9.x86_64.rpm',
-  "ls -l /usr/lib/oracle/",
-  "sudo sh -c 'echo /usr/lib/oracle/23.4/client64/lib/ > /etc/ld.so.conf.d/oracle.conf'",
+  # 'sudo alien -i oracle-instantclient-basic-23.4.0.24.05-1.el9.x86_64.rpm',
+  # "ls -l /usr/lib/oracle/",
+  # "sudo sh -c 'echo /usr/lib/oracle/23.4/client64/lib/ > /etc/ld.so.conf.d/oracle.conf'",
   'echo "Everything OK ----------------------------------"',
 ]
