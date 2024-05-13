@@ -1,6 +1,6 @@
 [phases.setup]
 nixPkgs = ['python310','glibc']
-aptPkgs = ['...','libsm6','wget','libc6','alien','oracle-instantclient-basic','oracle-instantclient-devel','oracle-instantclient-sqlplus','libaio1','libnss3','libnss3-tools','libnss3-dev','libnss3-1d']
+aptPkgs = ['...','libsm6','wget','libc6','alien','libaio1','libnss3','libnss3-tools','libnss3-dev','libnss3-1d']
 
 cmds = [
   'sudo apt-get -y update',
