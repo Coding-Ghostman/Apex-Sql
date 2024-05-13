@@ -38,9 +38,12 @@ def get_table_context_str():
     """Get table context string."""
     global oracle_table
     context_strs = []
-    if not oracle_table["connection"].is_healthy():
-        config = read_config()
-        oracle_table = db_Connect_thinModePool(config)
+    try:
+        if not oracle_table["connection"].is_healthy():
+            config = read_config()
+            oracle_table = db_Connect_thinModePool(config)
+    except Exception as e:
+        print(f"Error: {e}")
     for table_schema_obj in table_schema_objs:
         table_info = sql_database.get_single_table_info(table_schema_obj.table_name)
         if table_schema_obj.context_str:
@@ -55,9 +58,12 @@ def get_table_context_str():
 def parse_response_to_sql(response: ChatResponse) -> str:
     """Parse response to SQL."""
     global oracle_table
-    if not oracle_table["connection"].is_healthy():
-        config = read_config()
-        oracle_table = db_Connect_thinModePool(config)
+    try:
+        if not oracle_table["connection"].is_healthy():
+            config = read_config()
+            oracle_table = db_Connect_thinModePool(config)
+    except Exception as e:
+        print(f"Error: {e}")
     response = response.message.content.replace("", "")
     sql_query_start = response.find("SQLQuery:")
     if sql_query_start != -1:
@@ -75,10 +81,13 @@ def get_table_context_and_rows_str(
     query_str: str, table_schema_objs: List[SQLTableSchema]
 ):
     """Get table context string."""
-    if not oracle_table["connection"].is_healthy():
-        config = read_config()
-        oracle_table = db_Connect_thinModePool(config)
-
+    global oracle_table
+    try:
+        if not oracle_table["connection"].is_healthy():
+            config = read_config()
+            oracle_table = db_Connect_thinModePool(config)
+    except Exception as e:
+        print(f"Error: {e}")
     context_strs = []
     for table_schema_obj in table_schema_objs:
         # first append table info + additional context
