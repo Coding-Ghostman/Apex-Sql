@@ -1,6 +1,6 @@
 [phases.setup]
 nixPkgs = ['python310','glibc']
-aptPkgs = ['...','libsm6','wget','libc6','alien','libaio1']
+aptPkgs = ['...','libsm6','wget','unzip','libc6','alien','libaio1']
 
 cmds = [
   'sudo apt-get -y update',
