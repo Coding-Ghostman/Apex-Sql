@@ -35,6 +35,7 @@ oracle_table = db_Connect_thinModePool(config)
 def get_table_context_str():
     """Get table context string."""
     global oracle_table
+    global config
     context_strs = []
     try:
         if not oracle_table["connection"].closed:
@@ -56,6 +57,7 @@ def get_table_context_str():
 def parse_response_to_sql(response: ChatResponse) -> str:
     """Parse response to SQL."""
     global oracle_table
+    global config
     try:
         if not oracle_table["connection"].closed:
             config = read_config()
@@ -80,6 +82,7 @@ def get_table_context_and_rows_str(
 ):
     """Get table context string."""
     global oracle_table
+    global config
     try:
         if not oracle_table["connection"].closed:
             config = read_config()

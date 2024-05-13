@@ -1,11 +1,17 @@
 [phases.setup]
 nixPkgs = ['python310','glibc']
-aptPkgs = ['...','libsm6','libxext6','libc6','alien','libaio1']
+aptPkgs = ['...','libsm6','wget','libc6','alien','oracle-instantclient-basic','oracle-instantclient-devel','oracle-instantclient-sqlplus','libaio1','libnss3','libnss3-tools','libnss3-dev','libnss3-1d']
 
 cmds = [
   'sudo apt-get -y update',
-  # 'sudo alien -i oracle-instantclient-basic-23.4.0.24.05-1.el9.x86_64.rpm',
-  # "ls -l /usr/lib/oracle/",
-  # "sudo sh -c 'echo /usr/lib/oracle/23.4/client64/lib/ > /etc/ld.so.conf.d/oracle.conf'",
+  'wget https://download.oracle.com/otn_software/linux/instantclient/2340000/instantclient-basiclite-linux.x64-23.4.0.24.05.zip',
+  'unzip instantclient-basiclite-linux.x64-23.4.0.24.05.zip',
+  'cd instantclient_23_4',
+  'ln -s libclntsh.so.2.1 libclntsh.so',
+  'ln -s libocci.so.22.1 libocci.so',
+  'cd ..',
+  "ls",
+  "sudo sh -c 'echo /instantclient_23_4 > /etc/ld.so.conf.d/oracle.conf'",
+  'sudo ldconfig',
   'echo "Everything OK ----------------------------------"',
 ]

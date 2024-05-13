@@ -10,6 +10,7 @@ def db_Connect_thinModePool(config) -> dict:
     table_names = set()
     try:
         oracledb.defaults.stmtcachesize = 40
+        oracledb.init_oracle_client()
         connectionPool = oracledb.create_pool(
             user=config["user"],
             password=config["password"],
