@@ -6,12 +6,15 @@ from index_tables import index_all_tables
 import os
 from typing import List
 
+import llama_index
 import openai
 from dotenv import load_dotenv
 from llama_index.core import (
     PromptTemplate,
     SQLDatabase,
+    set_global_handler
 )
+import phoenix as px
 from llama_index.core.llms import ChatResponse
 from llama_index.core.objects import (
     SQLTableSchema,
@@ -29,11 +32,17 @@ from llama_index.core.query_pipeline import (
 
 load_dotenv()
 openai.api_key = os.environ.get("OPENAI_API_KEY")
-
+px.launch_app()
+set_global_handler("arize_phoenix")
+config = read_config()
+oracle_table = db_Connect_thinModePool(config)
 
 def get_table_context_str():
     """Get table context string."""
     context_strs = []
+    if not oracle_table["connection"].is_healthy():
+        config = read_config()
+        oracle_table = db_Connect_thinModePool(config)
     for table_schema_obj in table_schema_objs:
         table_info = sql_database.get_single_table_info(table_schema_obj.table_name)
         if table_schema_obj.context_str:
@@ -47,6 +56,9 @@ def get_table_context_str():
 
 def parse_response_to_sql(response: ChatResponse) -> str:
     """Parse response to SQL."""
+    if not oracle_table["connection"].is_healthy():
+        config = read_config()
+        oracle_table = db_Connect_thinModePool(config)
     response = response.message.content.replace("", "")
     sql_query_start = response.find("SQLQuery:")
     if sql_query_start != -1:
@@ -64,6 +76,10 @@ def get_table_context_and_rows_str(
     query_str: str, table_schema_objs: List[SQLTableSchema]
 ):
     """Get table context string."""
+    if not oracle_table["connection"].is_healthy():
+        config = read_config()
+        oracle_table = db_Connect_thinModePool(config)
+        
     context_strs = []
     for table_schema_obj in table_schema_objs:
         # first append table info + additional context
@@ -121,8 +137,6 @@ def get_QP():
 
 INCLUDE_TABLES = ["visa_requests2"]
 llm = OpenAI(model="gpt-3.5-turbo", response_format={"type": "json_object"})
-config = read_config()
-oracle_table = db_Connect_thinModePool(config)
 table_infos = get_table_info(oracle_table["connection"], INCLUDE_TABLES)
 sql_database = SQLDatabase(
     oracle_table["engine"], schema="test_schema", include_tables=INCLUDE_TABLES
@@ -163,3 +177,5 @@ QP_components = {
     "response_synthesis_prompt": response_synthesis_prompt,
     "response_synthesis_llm": llm,
 }
+
+print(px.active_session().url)
