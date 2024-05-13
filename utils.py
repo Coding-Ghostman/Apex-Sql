@@ -20,7 +20,9 @@ def db_Connect_thinModePool(config) -> dict:
             homogeneous=False,
             stmtcachesize=50,
         )
-        engine = create_engine("oracle+oracledb://", creator=connectionPool.acquire)
+        engine = create_engine(
+            "oracle+oracledb://", creator=connectionPool.acquire, pool_pre_ping=True
+        )
         connection = engine.connect()
         inspector = inspect(engine)
         for table_name in inspector.get_table_names(schema="TEST_SCHEMA"):

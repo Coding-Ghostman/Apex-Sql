@@ -5,8 +5,6 @@ from table_schema import get_schema_and_retreiver
 from index_tables import index_all_tables
 import os
 from typing import List
-
-import llama_index
 import openai
 from dotenv import load_dotenv
 from llama_index.core import (
@@ -39,7 +37,7 @@ def get_table_context_str():
     global oracle_table
     context_strs = []
     try:
-        if not oracle_table["connection"].is_healthy():
+        if not oracle_table["connection"].closed:
             config = read_config()
             oracle_table = db_Connect_thinModePool(config)
     except Exception as e:
@@ -59,7 +57,7 @@ def parse_response_to_sql(response: ChatResponse) -> str:
     """Parse response to SQL."""
     global oracle_table
     try:
-        if not oracle_table["connection"].is_healthy():
+        if not oracle_table["connection"].closed:
             config = read_config()
             oracle_table = db_Connect_thinModePool(config)
     except Exception as e:
@@ -83,7 +81,7 @@ def get_table_context_and_rows_str(
     """Get table context string."""
     global oracle_table
     try:
-        if not oracle_table["connection"].is_healthy():
+        if not oracle_table["connection"].closed:
             config = read_config()
             oracle_table = db_Connect_thinModePool(config)
     except Exception as e:
