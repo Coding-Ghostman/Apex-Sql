@@ -32,11 +32,14 @@ def text_to_sql_query():
         result = CONN.execute(text(sql_query))
         table_data = result.fetchall()
         data = pd.DataFrame(table_data, columns=tuple(result.keys()))
-        df_dict = data.where(pd.notnull(data), None).to_dict(orient="records")
+        data = data.map(lambda x: None if pd.isna(x) else x)
+        for col in data.select_dtypes(include="datetime").columns:
+            data[col] = data[col].astype(str)
+        data = data.to_dict(orient="records")
         res = {}
         res["summary"] = str(response).replace("assistant: ", "")
         res["query"] = sql_query
-        res["data"] = df_dict
+        res["data"] = data
     except Exception as e:
         return {"error": f"{e}"}
     return res
