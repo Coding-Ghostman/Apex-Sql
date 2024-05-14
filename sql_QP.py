@@ -145,6 +145,7 @@ def get_QP():
 
 
 INCLUDE_TABLES = ["visa_requests2"]
+
 llm = OpenAI(model="gpt-3.5-turbo", response_format={"type": "json_object"})
 table_infos = get_table_info(oracle_table["connection"], INCLUDE_TABLES)
 sql_database = SQLDatabase(
