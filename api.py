@@ -30,6 +30,7 @@ def text_to_sql_query():
         sql_query = (
             intermediats["sql_output_parser"].outputs["output"].replace("\n", " ")
         )
+        print(sql_query)
         result = CONN.execute(text(sql_query))
         table_data = result.fetchall()
         data = pd.DataFrame(table_data, columns=tuple(result.keys())).to_dict("records")
