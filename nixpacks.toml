@@ -4,14 +4,13 @@ aptPkgs = ['...','libsm6','wget','libc6','alien','libaio1']
 
 cmds = [
   'sudo apt-get -y update',
-  'wget https://download.oracle.com/otn_software/linux/instantclient/oracle-instantclient-basiclite-linuxx64.rpm',
-  'alien -i oracle-instantclient-basiclite-linuxx64.rpm',
-  'sudo apt-get -y install libaio1',
-  'export LD_LIBRARY_PATH=/usr/lib/oracle/23.4/client64/lib/${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}',
-  # 'sudo vi /etc/ld.so.conf.d/oracle.conf && sudo chmod o+r /etc/ld.so.conf.d/oracle.conf',
-  # '/usr/lib/oracle/23.4/client64/lib/',
-  'echo /usr/lib/oracle/',
+  # 'wget https://download.oracle.com/otn_software/linux/instantclient/oracle-instantclient-basiclite-linuxx64.rpm',
+  # 'alien -i oracle-instantclient-basiclite-linuxx64.rpm',
+  # 'sudo apt-get -y install libaio1',
+  # 'export LD_LIBRARY_PATH=/usr/lib/oracle/23.4/client64/lib/${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}',
+  # # 'sudo vi /etc/ld.so.conf.d/oracle.conf && sudo chmod o+r /etc/ld.so.conf.d/oracle.conf',
+  # # '/usr/lib/oracle/23.4/client64/lib/',
+  # 'echo /usr/lib/oracle/',
   'sudo ldconfig',
-
   'echo "Everything OK ----------------------------------"',
 ]

@@ -42,7 +42,7 @@ def get_table_context_str():
             config = read_config()
             oracle_table = db_Connect_thinModePool(config)
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error Here: {e}")
     for table_schema_obj in table_schema_objs:
         table_info = sql_database.get_single_table_info(table_schema_obj.table_name)
         if table_schema_obj.context_str:
