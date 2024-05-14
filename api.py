@@ -32,7 +32,7 @@ def text_to_sql_query():
         result = CONN.execute(text(sql_query))
         table_data = result.fetchall()
         data = pd.DataFrame(table_data, columns=tuple(result.keys()))
-        data = data.map(lambda x: None if pd.isna(x) else x)
+        data = data.applymap(lambda x: None if pd.isna(x) else x)
         for col in data.select_dtypes(include="datetime").columns:
             data[col] = data[col].astype(str)
         data = data.to_dict(orient="records")
