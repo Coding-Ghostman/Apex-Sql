@@ -1,5 +1,5 @@
 from sql_QP import get_QP
-
+import time
 from flask import Flask, request, jsonify
 from sqlalchemy import text
 import pandas as pd
@@ -14,7 +14,6 @@ def add_underscore_if_inprogress(text):
         text = text.replace("inprogress", "in_progress")
     if "in progress" in text:
         text = text.replace("in progress", "in_progress")
-    text += ".If possible,Do not add these columns with the name 'degree', 'passport', 'photo_image'"
     return text
 
 
@@ -30,15 +29,14 @@ def text_to_sql_query():
         sql_query = (
             intermediats["sql_output_parser"].outputs["output"].replace("\n", " ")
         )
-        print(sql_query)
         result = CONN.execute(text(sql_query))
         table_data = result.fetchall()
-        data = pd.DataFrame(table_data, columns=tuple(result.keys())).to_dict("records")
-
+        data = pd.DataFrame(table_data, columns=tuple(result.keys()))
+        df_dict = data.where(pd.notnull(data), None).to_dict(orient="records")
         res = {}
         res["summary"] = str(response).replace("assistant: ", "")
         res["query"] = sql_query
-        res["data"] = data
+        res["data"] = df_dict
     except Exception as e:
         return {"error": f"{e}"}
     return res
