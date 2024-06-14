@@ -2,6 +2,7 @@ import threading
 import time
 import pandas as pd
 from flask import Flask, request, jsonify
+from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
 from sql_QP import get_QP, restart_database_connection, get_ORACLE_TABLE
 
