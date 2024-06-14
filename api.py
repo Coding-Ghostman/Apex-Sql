@@ -18,6 +18,7 @@ def add_underscore_if_inprogress(text):
 
 @app.route("/api/apex/query", methods=["POST"])
 def text_to_sql_query():
+    res = {}
     if request.json is None or "query" not in request.json:
         return jsonify({"error": "No query part in JSON payload"})
     try:
@@ -34,7 +35,7 @@ def text_to_sql_query():
         for col in data.select_dtypes(include="datetime").columns:
             data[col] = data[col].astype(str)
         data = data.to_dict(orient="records")
-        res = {}
+
         res["summary"] = str(response).replace("assistant: ", "")
         res["query"] = sql_query
         res["data"] = data
