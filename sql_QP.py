@@ -123,7 +123,11 @@ def get_QP():
     qp.add_link("sql_retriever", "response_synthesis_prompt", dest_key="context_str")
     qp.add_link("input", "response_synthesis_prompt", dest_key="query_str")
     qp.add_link("response_synthesis_prompt", "response_synthesis_llm")
-    return qp, oracle_table
+    return qp
+
+
+def get_ORACLE_TABLE():
+    return oracle_table
 
 
 INCLUDE_TABLES = ["visa_requests2"]
