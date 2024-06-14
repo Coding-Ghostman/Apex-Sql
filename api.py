@@ -12,12 +12,13 @@ app = Flask(__name__)
 
 
 def ping_database():
+    global ORACLE_TABLE, CONN
     try:
         CONN.execute("SELECT 1")
     except OperationalError:
         print("Lost database connection. Attempting to reconnect...")
         restart_database_connection()
-        global ORACLE_TABLE, CONN
+
         ORACLE_TABLE = get_ORACLE_TABLE()
         CONN = ORACLE_TABLE["connection"]
         print("Database connection re-established.")
@@ -73,9 +74,10 @@ def text_to_sql_query():
         res = process_query(request, res)
     except Exception as e:
         if "database" in str(e).lower() or "dby" in str(e).lower():
-            global ORACLE_TABLE
+            global ORACLE_TABLE, CONN
             handle_database_error()
             ORACLE_TABLE = get_ORACLE_TABLE()
+            CONN = ORACLE_TABLE["connection"]
             res = process_query(request, res)
         else:
             return {"error": f"{e}"}
