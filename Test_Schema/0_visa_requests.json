@@ -1,1 +1,4 @@
-{"table_name": "visa_requests", "table_summary": "Table containing information about visa requests including request details, status, and document attachments."}
+{
+	"table_name": "visa_requests",
+	"table_summary": "Table containing information about visa requests including request details, status, and document attachments."
+}

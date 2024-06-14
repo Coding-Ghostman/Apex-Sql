@@ -29,6 +29,7 @@ from llama_index.core.query_pipeline import (
 
 load_dotenv()
 openai.api_key = os.environ.get("OPENAI_API_KEY")
+# mistral.api.key = os.environ.get("MISTRAL_API_KEY")
 
 
 def get_table_context_str():
@@ -122,6 +123,7 @@ def get_QP():
 INCLUDE_TABLES = ["visa_requests2"]
 
 llm = OpenAI(model="gpt-3.5-turbo", response_format={"type": "json_object"})
+# llm = Mistral(model="mistral-medium", response_format={"type": "json_object"})
 config = read_config()
 oracle_table = db_Connect_thinModePool(config)
 table_infos = get_table_info(oracle_table["connection"], INCLUDE_TABLES)
@@ -130,8 +132,6 @@ sql_database = SQLDatabase(
 )
 
 table_schema_objs, obj_retriever = get_schema_and_retreiver(sql_database, table_infos)
-
-
 sql_retriever = SQLRetriever(sql_database)
 table_parser_component = FnComponent(fn=get_table_context_str)
 sql_parser_component = FnComponent(fn=parse_response_to_sql)
@@ -149,6 +149,7 @@ response_synthesis_prompt_str = (
     "SQL Response: {context_str}\n"
     "Response: "
 )
+
 response_synthesis_prompt = PromptTemplate(
     response_synthesis_prompt_str,
 )

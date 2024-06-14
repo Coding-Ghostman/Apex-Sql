@@ -16,12 +16,10 @@ def add_underscore_if_inprogress(text):
         text = text.replace("in progress", "in_progress")
     return text
 
-
 @app.route("/api/apex/query", methods=["POST"])
 def text_to_sql_query():
     if "query" not in request.json:
         return jsonify({"error": "No query part in JSON payload"})
-
     try:
         query = add_underscore_if_inprogress(request.json["query"])
 

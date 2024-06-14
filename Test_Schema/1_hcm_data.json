@@ -1,1 +1,4 @@
-{"table_name": "hcm_data", "table_summary": "Table containing information about employees including department, nationality, performance, salary, gender, and location."}
+{
+	"table_name": "hcm_data",
+	"table_summary": "Table containing information about employees including department, nationality, performance, salary, gender, and location."
+}
