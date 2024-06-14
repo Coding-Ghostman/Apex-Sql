@@ -1,12 +1,39 @@
-from sql_QP import get_QP, restart_database_connection, get_ORACLE_TABLE
-from flask import Flask, request, jsonify
-from sqlalchemy import text
+import threading
+import time
 import pandas as pd
+from flask import Flask, request, jsonify
+from sqlalchemy.exc import OperationalError
+from sql_QP import get_QP, restart_database_connection, get_ORACLE_TABLE
 
 QP = get_QP()
 ORACLE_TABLE = get_ORACLE_TABLE()
 CONN = ORACLE_TABLE["connection"]
 app = Flask(__name__)
+
+
+def ping_database():
+    try:
+        CONN.execute("SELECT 1")
+    except OperationalError:
+        print("Lost database connection. Attempting to reconnect...")
+        restart_database_connection()
+        global ORACLE_TABLE, CONN
+        ORACLE_TABLE = get_ORACLE_TABLE()
+        CONN = ORACLE_TABLE["connection"]
+        print("Database connection re-established.")
+
+
+def start_ping_thread():
+    def ping_loop():
+        while True:
+            ping_database()
+            time.sleep(300)  # Ping every 5 minutes. Adjust the interval as needed.
+
+    thread = threading.Thread(target=ping_loop)
+    thread.daemon = (
+        True  # This ensures the thread will be killed when the main thread exits.
+    )
+    thread.start()
 
 
 def add_underscore_if_inprogress(text):
@@ -62,4 +89,5 @@ def handle_database_error():
 
 
 if __name__ == "__main__":
+    start_ping_thread()
     app.run()
