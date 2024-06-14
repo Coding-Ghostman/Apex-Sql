@@ -39,7 +39,7 @@ def text_to_sql_query():
         res["query"] = sql_query
         res["data"] = data
     except Exception as e:
-        if "database" in str(e).lower():
+        if "database" in str(e).lower() or "dby" in str(e).lower():
             handle_database_error()
         else:
             return {"error": f"{e}"}
