@@ -15,7 +15,7 @@ app = Flask(__name__)
 def ping_database():
     global ORACLE_TABLE, CONN
     try:
-        CONN.execute("SELECT 1")
+        CONN.execute(text("SELECT 1"))
     except OperationalError:
         print("Lost database connection. Attempting to reconnect...")
         restart_database_connection()
