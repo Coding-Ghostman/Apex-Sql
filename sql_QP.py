@@ -89,6 +89,12 @@ def get_table_context_and_rows_str(
     return "\n\n".join(context_strs)
 
 
+def restart_database_connection():
+    global oracle_table
+    config = read_config()
+    oracle_table = db_Connect_thinModePool(config)
+
+
 def get_QP():
     qp = QP(
         modules={

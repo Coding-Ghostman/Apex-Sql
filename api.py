@@ -1,5 +1,4 @@
-from sql_QP import get_QP
-import time
+from sql_QP import get_QP, restart_database_connection
 from flask import Flask, request, jsonify
 from sqlalchemy import text
 import pandas as pd
@@ -16,9 +15,10 @@ def add_underscore_if_inprogress(text):
         text = text.replace("in progress", "in_progress")
     return text
 
+
 @app.route("/api/apex/query", methods=["POST"])
 def text_to_sql_query():
-    if "query" not in request.json:
+    if request.json is None or "query" not in request.json:
         return jsonify({"error": "No query part in JSON payload"})
     try:
         query = add_underscore_if_inprogress(request.json["query"])
@@ -39,8 +39,17 @@ def text_to_sql_query():
         res["query"] = sql_query
         res["data"] = data
     except Exception as e:
-        return {"error": f"{e}"}
-    return res
+        if "database" in str(e).lower():
+            handle_database_error()
+        else:
+            return {"error": f"{e}"}
+    return jsonify(res)
+
+
+def handle_database_error():
+    print("Database error encountered, attempting to restart connection...")
+    restart_database_connection()
+    print("Database connection restarted successfully.")
 
 
 if __name__ == "__main__":
